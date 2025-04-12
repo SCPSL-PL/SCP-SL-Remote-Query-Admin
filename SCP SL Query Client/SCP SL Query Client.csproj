@@ -16,4 +16,16 @@
         <DeterministicSourcePaths>true</DeterministicSourcePaths>
         <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
     </PropertyGroup>
+    <Target Name="Update internal dependencies" AfterTargets="PostBuildEvent" Condition="exists('$(POLSPOL_REFERENCES)')">
+        <Exec Command="xcopy /y &quot;$(TargetPath)&quot; &quot;$(POLSPOL_REFERENCES)\internal\&quot;" />
+        <Exec Command="xcopy /y &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(POLSPOL_REFERENCES)\internal\&quot;" />
+    </Target>
+    <Target Name="Copy to server" AfterTargets="PostBuildEvent" Condition="exists('$(SL_PLUGINS)') AND '$(Configuration)' == 'DEBUG'">
+        <Exec Command="xcopy /y &quot;$(TargetPath)&quot; &quot;$(SL_PLUGINS)\dependencies\&quot;" />
+        <Exec Command="xcopy /y &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(SL_PLUGINS)\dependencies\&quot;" />
+    </Target>
+    <Target Name="Copy to build" AfterTargets="PostBuildEvent" Condition="exists('$(POLSPOL_BUILD)') AND '$(Configuration)' == 'RELEASE'">
+        <Exec Command="xcopy /y &quot;$(TargetPath)&quot; &quot;$(POLSPOL_BUILD)\scpsl\dependencies\&quot;" />
+        <Exec Command="xcopy /y &quot;$(TargetDir)$(TargetName).pdb&quot; &quot;$(POLSPOL_BUILD)\scpsl\dependencies\&quot;" />
+    </Target>
 </Project>
